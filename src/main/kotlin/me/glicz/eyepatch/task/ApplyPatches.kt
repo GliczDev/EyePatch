@@ -1,8 +1,7 @@
 package me.glicz.eyepatch.task
 
-import codechicken.diffpatch.cli.PatchOperation
-import me.glicz.eyepatch.util.JGit
-import me.glicz.eyepatch.util.asPath
+import io.codechicken.diffpatch.cli.PatchOperation
+import me.glicz.eyepatch.util.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.SetProperty
@@ -31,9 +30,9 @@ abstract class ApplyPatches : DefaultTask() {
         val targetDir = targetDir.get().asPath
 
         val result = PatchOperation.builder().run {
-            basePath(targetDir)
-            patchesPath(patchesDir)
-            outputPath(targetDir)
+            baseInput(targetDir)
+            patchesInput(patchesDir)
+            patchedOutput(targetDir)
             lineEnding("\n")
             ignorePrefix(".git")
 
@@ -42,7 +41,7 @@ abstract class ApplyPatches : DefaultTask() {
             build().operate()
         }
 
-        result.summary.print(System.out, false)
+        result.summary?.print(System.out, false)
 
         JGit(targetDir).use { git ->
             git.commit().apply {

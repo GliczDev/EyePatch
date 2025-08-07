@@ -1,9 +1,7 @@
 package me.glicz.eyepatch.task
 
-import codechicken.diffpatch.cli.DiffOperation
-import me.glicz.eyepatch.util.asPath
-import me.glicz.eyepatch.util.forceDeleteRecursively
-import me.glicz.eyepatch.util.projectPath
+import io.codechicken.diffpatch.cli.DiffOperation
+import me.glicz.eyepatch.util.*
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
@@ -32,9 +30,9 @@ abstract class MakePatches : AbstractRepositoryTask() {
         val cloneDir = repositoryDir.get().asPath
 
         val result = DiffOperation.builder().run {
-            aPath(project.projectPath.resolve(submodule))
-            bPath(cloneDir)
-            outputPath(patchesDir)
+            baseInput(project.projectPath.resolve(submodule))
+            changedInput(cloneDir)
+            patchesOutput(patchesDir)
             autoHeader(true)
             lineEnding("\n")
             ignorePrefix(".git")
@@ -44,6 +42,6 @@ abstract class MakePatches : AbstractRepositoryTask() {
             build().operate()
         }
 
-        result.summary.print(System.out, false)
+        result.summary?.print(System.out, false)
     }
 }

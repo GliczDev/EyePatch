@@ -6,11 +6,10 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven("https://maven.covers1624.net/")
 }
 
 dependencies {
-    implementation("codechicken:DiffPatch:1.5.0.30:all") {
+    implementation("io.codechicken:DiffPatch:2.0.1.40:all") {
         isTransitive = false
     }
     implementation("org.eclipse.jgit:org.eclipse.jgit:7.3.0.202506031305-r") {
@@ -43,7 +42,7 @@ tasks {
         archiveClassifier = null
 
         listOf(
-            "codechicken",
+            "io.codechicken",
             "com.googlecode",
             "org.apache",
             "org.eclipse",
