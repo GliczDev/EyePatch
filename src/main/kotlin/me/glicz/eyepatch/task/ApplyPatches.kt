@@ -5,12 +5,10 @@ import me.glicz.eyepatch.util.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import kotlin.io.path.createDirectories
 
+@UntrackedTask(because = "Patches repository")
 abstract class ApplyPatches : DefaultTask() {
     @get:InputDirectory
     abstract val patchesDir: DirectoryProperty
