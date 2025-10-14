@@ -1,6 +1,7 @@
 package me.glicz.eyepatch.task
 
 import io.codechicken.diffpatch.cli.PatchOperation
+import io.codechicken.diffpatch.util.PatchMode
 import me.glicz.eyepatch.util.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -31,6 +32,7 @@ abstract class ApplyPatches : DefaultTask() {
             baseInput(targetDir)
             patchesInput(patchesDir)
             patchedOutput(targetDir)
+            mode(PatchMode.OFFSET)
             lineEnding("\n")
             ignorePrefix(".git")
 
