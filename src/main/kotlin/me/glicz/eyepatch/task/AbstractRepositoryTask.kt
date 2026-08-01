@@ -47,7 +47,7 @@ abstract class AbstractRepositoryTask : DefaultTask() {
         val git = Git(repositoryDir)
 
         try {
-            require(repositoryDir.exists())
+            require(repositoryDir.resolve(".git").exists())
 
             git("reset", "--hard", commitId).runSilently()
         } catch (_: Exception) {
@@ -56,7 +56,7 @@ abstract class AbstractRepositoryTask : DefaultTask() {
                 createDirectories()
             }
 
-            git("clone", remoteUrl, ".").runSilently()
+            git("clone", "--no-checkout", remoteUrl, ".").runSilently()
             git("checkout", commitId).runSilently()
             git("remote", "remove", "origin").runSilently()
         }
