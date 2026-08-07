@@ -5,21 +5,29 @@ import io.codechicken.diffpatch.util.PatchMode
 import me.glicz.eyepatch.util.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import kotlin.io.path.createDirectories
 
 @UntrackedTask(because = "Patches repository")
 abstract class ApplyPatches : DefaultTask() {
-    @get:InputDirectory
+    @get:InputFiles
     abstract val patchesDir: DirectoryProperty
 
     @get:InputDirectory
     abstract val targetDir: DirectoryProperty
 
     @get:Input
+    abstract val patchMode: Property<PatchMode>
+
+    @get:Input
     @get:Optional
     abstract val ignoredPrefixes: SetProperty<String>
+
+    init {
+        patchMode.convention(PatchMode.OFFSET)
+    }
 
     @TaskAction
     fun run() {
@@ -32,7 +40,7 @@ abstract class ApplyPatches : DefaultTask() {
             baseInput(targetDir)
             patchesInput(patchesDir)
             patchedOutput(targetDir)
-            mode(PatchMode.OFFSET)
+            mode(patchMode.get())
             lineEnding("\n")
             ignorePrefix(".git")
 

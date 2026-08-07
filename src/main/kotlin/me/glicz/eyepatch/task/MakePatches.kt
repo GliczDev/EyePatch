@@ -24,7 +24,7 @@ abstract class MakePatches : AbstractRepositoryTask() {
             forceDeleteRecursively()
             createDirectories()
         }
-        val submodule = this@MakePatches.submodule.get()
+        val submodule = submodule.get()
         val cloneDir = repositoryDir.get().asPath
 
         val result = DiffOperation.builder().run {
