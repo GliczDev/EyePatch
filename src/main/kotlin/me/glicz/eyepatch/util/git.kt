@@ -7,6 +7,8 @@ import java.io.InputStreamReader
 import java.io.PrintStream
 import java.nio.file.Path
 
+private val DEBUG = System.getProperty("eyepatch.debug").toBoolean()
+
 class Git(private val path: Path) {
     constructor(project: Project) : this(project.projectPath)
 
@@ -17,15 +19,15 @@ class GitCommand internal constructor(
     private val path: Path,
     private val args: Array<out String>
 ) {
-    fun run(silent: Boolean = false, silentErr: Boolean = false) {
+    fun run(silentOut: Boolean = false, silentErr: Boolean = false) {
         val process = ProcessBuilder("git", *args)
             .directory(path.toRealPath().toFile())
             .start()
 
-        if (!silent) {
+        if (!silentOut || DEBUG) {
             redirect(process.inputStream, System.out)
         }
-        if (!silentErr) {
+        if (!silentErr || DEBUG) {
             redirect(process.errorStream, System.err)
         }
 
@@ -35,7 +37,7 @@ class GitCommand internal constructor(
         }
     }
 
-    fun runSilently() = run(silent = true, silentErr = true)
+    fun runSilently() = run(silentOut = true, silentErr = true)
 }
 
 private fun redirect(`is`: InputStream, out: PrintStream) {
