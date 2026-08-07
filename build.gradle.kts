@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
-    id("com.gradle.plugin-publish") version "1.3.0"
-    id("com.gradleup.shadow") version "8.3.5"
+    id("com.gradle.plugin-publish") version "2.1.1"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 repositories {
@@ -9,10 +9,10 @@ repositories {
 }
 
 dependencies {
-    implementation("io.codechicken:DiffPatch:2.0.1.40:all") {
+    implementation("io.codechicken:DiffPatch:2.1.0.43:all") {
         isTransitive = false
     }
-    implementation("org.eclipse.jgit:org.eclipse.jgit:7.3.0.202506031305-r") {
+    implementation("org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r") {
         exclude("org.slf4j")
     }
 }
