@@ -28,28 +28,37 @@ abstract class AbstractRepositoryTask : DefaultTask() {
     }
 
     protected fun cloneRepository() {
-        val remoteUrl: String
-        val commitId: String
+        initSubmodule()
 
-        JGit(project).use { jgit ->
+        val (remoteUrl, commitId) = JGit(project).use { jgit ->
             SubmoduleWalk.forIndex(jgit.repository).use { walk ->
                 val submoduleName = submodule.get()
                 walk.setFilter(PathFilterGroup.createFromStrings(submoduleName))
 
                 require(walk.next())
 
-                remoteUrl = walk.remoteUrl
-                commitId = walk.objectId.name
+                walk.remoteUrl to walk.objectId.name
             }
         }
 
-        val repositoryDir = this@AbstractRepositoryTask.repositoryDir.get().asPath
+        val repositoryDir = repositoryDir.get().asPath
         val git = Git(repositoryDir)
 
         try {
             require(repositoryDir.resolve(".git").exists())
 
-            git("reset", "--hard", commitId).runSilently()
+            try {
+                git("reset", "--hard", commitId).runSilently()
+            } catch (_: Exception) {
+                try {
+                    git("remote", "add", "origin", remoteUrl).runSilently()
+                } catch (_: Exception) {
+                    git("remote", "set-url", "origin", remoteUrl).runSilently()
+                }
+
+                git("fetch", "origin").runSilently()
+                git("reset", "--hard", commitId).runSilently()
+            }
         } catch (_: Exception) {
             repositoryDir.apply {
                 forceDeleteRecursively()
@@ -58,7 +67,8 @@ abstract class AbstractRepositoryTask : DefaultTask() {
 
             git("clone", "--no-checkout", remoteUrl, ".").runSilently()
             git("checkout", commitId).runSilently()
-            git("remote", "remove", "origin").runSilently()
+        } finally {
+            runCatching { git("remote", "remove", "origin").runSilently() }
         }
 
         git("submodule", "update", "--init", "--recursive", "--force").runSilently()

@@ -7,7 +7,6 @@ import org.gradle.api.tasks.UntrackedTask
 abstract class InitializeRepository : AbstractRepositoryTask() {
     @TaskAction
     fun run() {
-        initSubmodule()
         cloneRepository()
     }
 }
